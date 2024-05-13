@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    
+
+// Load data function
+function cargaDatos(id, id_paciente, id_medico,diagnostico,fecha) {
+  document.getElementById('id_historial_medicous').value = id;
+  document.getElementById('id_pacienteus').value = id_paciente;
+  document.getElementById('id_medicous').value = id_medico;
+  document.getElementById('diagnosticous').value = diagnostico;
+  document.getElementById('fechaus').value = fecha;
+
+}
+
+
+
+
+function extraer(){
+fetch("http://localhost:3333/historial_medico")
+.then(response=>response.json())
+.then(datos=>{
+let medida=datos.length;
+document.getElementById('datosus').innerHTML='';
+for(x=0;x<=medida-1;x++){
+document.getElementById('datosus').innerHTML +=`<tr onclick="cargarDatos('${datos[x].id}','${datos[x].id_paciente}','${datos[x].id_medico}','${datos[x].diagnostico}','${datos[x].fecha}')">
+                    <th scope="col">${datos[x].id}</th>
+                    <th scope="col">${datos[x].id_paciente}</th>
+                    <th scope="col">${datos[x].id_medico}</th>
+                    <th scope="col">${datos[x].diagnostico}</th>
+                    <th scope="col">${datos[x].fecha}</th>
+
+                  </tr>`;
+}
+})
+
+
+}
+
+
+
+document.getElementById('gdatos').addEventListener("click",()=>{
+    let  id_historial_medicou=document.getElementById('id_historial_medicous').value;
+    let id_pacienteu=document.getElementById('id_pacienteus').value;
+    let id_medicou=document.getElementById('id_medicous').value;
+
+    let diagnosticou=document.getElementById('diagnosticous').value;
+    let fechau=document.getElementById('fechaus').value;
+
+    let historial_medico={
+        id:id_historial_medicou,
+        id_paciente:id_pacienteu,
+        id_medico:id_medicou,
+        diagnostico:diagnosticou,
+        fecha:fechau
+    }
+
+    let response=fetch("http://localhost:3333/historial_medico",{
+      method:'POST',
+      headers: {'Content-Type':'application/json;charset=utf-8'},
+      body:JSON.stringify(historial_medico)
+    })
+    .then(response=>extraer())
+
+});
+
+function buscar() {
+  const datosElement = document.getElementById('datos');
+  datosElement.addEventListener("click", async () => {
+    try {
+      
+        let  id_historial_medicou=document.getElementById('id_historial_medicous').value;
+    let id_pacienteu=document.getElementById('id_pacienteus').value;
+    let id_medicou=document.getElementById('id_medicous').value;
+
+    let diagnosticou=document.getElementById('diagnosticous').value;
+    let fechau=document.getElementById('fechaus').value;
+
+    let historial_medico={
+        id:id_historial_medicou,
+        id_paciente:id_pacienteu,
+        id_medico:id_medicou,
+        diagnostico:diagnosticou,
+        fecha:fechau
+    }
+      const response = await fetch(`http://localhost:3333/historial_medico`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        body: JSON.stringify(historial_medico)
+      });
+
+      const responseBody = await response.json();
+      console.log(responseBody);
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  });
+}
+
+
+
+</script>
+</html>

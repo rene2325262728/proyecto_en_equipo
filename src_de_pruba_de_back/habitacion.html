@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+
+    
+
+// Load data function
+function cargaDatos(id, tipo,disponibilidad) {
+  document.getElementById('id_habitacionus').value = id;
+  document.getElementById('tipous').value = tipo;
+  document.getElementById('disponibilidadus').value = disponibilidad;
+}
+
+
+
+
+function extraer(){
+fetch("http://localhost:3333/habitacion")
+.then(response=>response.json())
+.then(datos=>{
+let medida=datos.length;
+document.getElementById('datosus').innerHTML='';
+for(x=0;x<=medida-1;x++){
+document.getElementById('datosus').innerHTML +=`<tr onclick="cargarDatos('${datos[x].id}','${datos[x].tipo}','${datos[x].disponibilidad}')">
+                    <th scope="col">${datos[x].id}</th>
+                    <th scope="col">${datos[x].tipo}</th>
+                    <th scope="col">${datos[x].disponibilidad}</th>
+                  </tr>`;
+}
+})
+
+
+}
+
+
+
+document.getElementById('gdatos').addEventListener("click",()=>{
+    let  id_habitacionu=document.getElementById('id_habitacionus').value;
+    let tipou=document.getElementById('tipous').value;
+    let disponibilidadu=document.getElementById('disponibilidadus').value;
+
+    let habitacion={
+        id:id_habitacionu,
+        nombre:tipou,
+        clave:disponibilidadu,
+    }
+
+    let response=fetch("http://localhost:3333/habitacion",{
+      method:'POST',
+      headers: {'Content-Type':'application/json;charset=utf-8'},
+      body:JSON.stringify(habitacion)
+    })
+    .then(response=>extraer())
+
+});
+
+function buscar() {
+  const datosElement = document.getElementById('datos');
+  datosElement.addEventListener("click", async () => {
+    try {
+        let  id_habitacionu=document.getElementById('id_habitacionus').value;
+    let tipou=document.getElementById('tipous').value;
+    let disponibilidadu=document.getElementById('disponibilidadus').value;
+
+    let habitacion={
+        id:id_habitacionu,
+        nombre:tipou,
+        clave:disponibilidadu,
+    }
+
+      const response = await fetch(`http://localhost:3333/habitacion`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        body: JSON.stringify(habitacion)
+      });
+
+      const responseBody = await response.json();
+      console.log(responseBody);
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  });
+}
+
+</script>
+</html>

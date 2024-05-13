@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        
+
+// Load data function
+function cargaDatos(id, descripcion, costo, rol) {
+  document.getElementById('id_tratamientous').value = id;
+  document.getElementById('decripcionus').value = descripcion;
+  document.getElementById('costous').value = costo;
+  
+}
+
+
+
+
+function extraer(){
+fetch("http://localhost:3333/tratamiento")
+.then(response=>response.json())
+.then(datos=>{
+let medida=datos.length;
+document.getElementById('datosus').innerHTML='';
+for(x=0;x<=medida-1;x++){
+document.getElementById('datosus').innerHTML +=`<tr onclick="cargarDatos('${datos[x].id}','${datos[x].descripcion}','${datos[x].costo}')">
+                    <th scope="col">${datos[x].id}</th>
+                    <th scope="col">${datos[x].descripcion}</th>
+                    <th scope="col">${datos[x].costo}</th>
+                    
+                  </tr>`;
+}
+})
+
+
+}
+
+
+
+document.getElementById('gdatos').addEventListener("click",()=>{
+    let  id_tratamientou=document.getElementById('id_tratamientous').value;
+    let descripcionu=document.getElementById('descripcionus').value;
+    let costou=document.getElementById('costous').value;
+  
+
+    let tratamiento={
+        id:id_tratamientou,
+        descripcion:descripcionu,
+        costo:costou,
+          
+    }
+
+    let response=fetch("http://localhost:3333/tratamiento",{
+      method:'POST',
+      headers: {'Content-Type':'application/json;charset=utf-8'},
+      body:JSON.stringify(tratamiento)
+    })
+    .then(response=>extraer())
+
+});
+
+
+
+
+
+function buscar() {
+  const datosElement = document.getElementById('gdatos');
+  datosElement.addEventListener("click", async () => {
+    try {
+    let  id_tratamientou=document.getElementById('id_tratamientous').value;
+    let descripcionu=document.getElementById('descripcionus').value;
+    let costou=document.getElementById('costous').value;
+  
+
+    let tratamiento={
+        id:id_tratamientou,
+        descripcion:descripcionu,
+        costo:costou,
+          
+    }
+
+      const response = await fetch(`http://localhost:3333/tratamiento`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        body: JSON.stringify(tratamiento)
+      });
+
+      const responseBody = await response.json();
+      console.log(responseBody);
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  });
+}
+    </script>
+    
+</body>
+</html>

@@ -1,1 +1,0 @@
-# proyecto_en_equipo

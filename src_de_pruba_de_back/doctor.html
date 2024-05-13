@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    
+
+    function log() {
+  const username = document.getElementById('nombreus').value;
+  const password = document.getElementById('claveus').value;
+
+  fetchLoginData(nombreus, claveus)
+   .then(handleLoginResponse)
+   .catch(handleError);
+}
+
+function fetchLoginData(username, password) {
+  const url = `http://localhost:3333/login?usuario=${encodeURIComponent(nombreus)}&clave=${encodeURIComponent(claveus)}`;
+  return fetch(url).then(response => response.json());
+}
+
+function handleLoginResponse(data) {
+  if (data[0] === 'cardiologia') {
+    redirect_to_principal();
+  }
+}
+
+
+    function redirect_to_principal() {
+  document.location.href = 'principal.html';
+}
+
+function handleError(error) {
+  console.error('Error logging in:', error);
+  // Add error handling logic here
+}
+
+// Load data function
+function cargaDatos(id, nombre, apellido, especialidad,telefono,clave) {
+  document.getElementById('id_medicous').value = id;
+  document.getElementById('nombreus').value = nombre;
+  document.getElementById('apellidous').value = apellido;
+  document.getElementById('especialidadus').value = especialidad;
+  document.getElementById('telefonous').value = telefono;
+  document.getElementById('claveus').value = clave;
+
+
+
+  
+}
+
+
+
+
+function extraer(){
+fetch("http://localhost:3333/tratamiento")
+.then(response=>response.json())
+.then(datos=>{
+let medida=datos.length;
+document.getElementById('datosus').innerHTML='';
+for(x=0;x<=medida-1;x++){
+document.getElementById('datosus').innerHTML +=`<tr onclick="cargarDatos('${datos[x].id}','${datos[x].nombre}','${datos[x].apellido}','${datos[x].especialidad}','${datos[x].telefono}','${datos[x].clave}')">
+                    <th scope="col">${datos[x].id}</th>
+                    <th scope="col">${datos[x].nombre}</th>
+                    <th scope="col">${datos[x].apellido}</th>
+                    <th scope="col">${datos[x].especialidad}</th>
+                    <th scope="col">${datos[x].telefono}</th>
+                    <th scope="col">${datos[x].clave}</th>
+
+
+
+                    
+                  </tr>`;
+}
+})
+
+
+}
+
+
+
+document.getElementById('gdatos').addEventListener("click",()=>{
+    let  id_medicou=document.getElementById('id_medicous').value;
+    let nombreu=document.getElementById('nombreus').value;
+    let apellidou=document.getElementById('apellidous').value;
+    let especialidadu=document.getElementById('especialidadus').value;
+    let telefonou=document.getElementById('telefonous').value;
+    let claveu=document.getElementById('claveus').value;
+
+  
+
+    let id_medico={
+        id:id_medicou,
+        nombre:nombreu,
+        apellido:apellidou,
+        especialidad:especialidadu,
+        telefono:telefonou,
+        clave:claveu
+        
+          
+    }
+
+    let response=fetch("http://localhost:3333/medico",{
+      method:'POST',
+      headers: {'Content-Type':'application/json;charset=utf-8'},
+      body:JSON.stringify(medico)
+    })
+    .then(response=>extraer())
+
+});
+
+
+
+
+
+function buscar() {
+  const datosElement = document.getElementById('gdatos');
+  datosElement.addEventListener("click", async () => {
+    try {
+        let  id_medicou=document.getElementById('id_medicous').value;
+    let nombreu=document.getElementById('nombreus').value;
+    let apellidou=document.getElementById('apellidous').value;
+    let especialidadu=document.getElementById('especialidadus').value;
+    let telefonou=document.getElementById('telefonous').value;
+    let claveu=document.getElementById('claveus').value;
+
+  
+
+    let id_medico={
+        id:id_medicou,
+        nombre:nombreu,
+        apellido:apellidou,
+        especialidad:especialidadu,
+        telefono:telefonou,
+        clave:claveu
+        
+          
+    }
+
+      const response = await fetch(`http://localhost:3333/medico`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        body: JSON.stringify(medico)
+      });
+
+      const responseBody = await response.json();
+      console.log(responseBody);
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  });
+}
+</script>
+</html>

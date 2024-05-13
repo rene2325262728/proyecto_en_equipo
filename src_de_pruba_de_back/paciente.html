@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+  <div id="video-contenedor"></div>
+
+  <form id="message-form" method="post" action="http://localhost:3333/api/sendWhatsAppMessage">
+    <fieldset>
+      <label for="recipient">Recipient:</label>
+      <input type="text" id="recipient" name="recipient" required><br><br>
+      <label for="message">Message:</label>
+      <textarea id="message" name="message" required></textarea><br><br>
+      <button type="submit" aria-label="Send Message">Send Message</button>
+    </fieldset>
+  </form>
+  <div id="message-response"></div>
+
+  <div id="map-container"></div>
+</body>
+<script>
+
+// JavaScript
+
+const mapContainer = document.getElementById('map-container');
+
+fetch('http://localhost:3333/map?cp=40.7128,-74.0060&lvl=10') // replace with your coordinates and zoom level
+ .then(response => response.text())
+ .then(url => {
+    const iframe = document.createElement('iframe');
+    iframe.src = url;
+    iframe.width = '100%';
+    iframe.height = '600px';+
+    mapContainer.appendChild(iframe);
+  })
+ .catch(error => console.error('Error:', error));
+
+
+
+document.getElementById('message-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  try {
+    const recipient = document.getElementById('recipient').value;
+    const message = document.getElementById('message').value;
+
+    const response = await fetch('http://localhost:3333/sendWhatsAppMessage', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ recipient, message })
+    });
+
+    const data = await response.text();
+    document.getElementById('message-response').innerText = data;
+  } catch (error) {
+    console.error('Error:', error);
+    // Consider calling a centralized error handling function here
+  }
+});
+
+
+
+fetch('http://localhost:3333/videos')
+           .then(response => response.text())
+           .then(html => {
+              
+                const videoContainer = document.getElementById('video-contenedor');
+                videoContainer.innerHTML = html;
+            })
+           .catch(error => console.error('Error:', error));
+
+
+
+
+
+
+function log() {
+  const username = document.getElementById('nombreus').value;
+  const password = document.getElementById('claveus').value;
+
+  fetchLoginData(nombreus, claveus)
+   .then(handleLoginResponse)
+   .catch(handleError);
+}
+
+function fetchLoginData(username, password) {
+  const url = `http://localhost:3333/login?usuario=${encodeURIComponent(nombreus)}&clave=${encodeURIComponent(claveus)}`;
+  return fetch(url).then(response => response.json());
+}
+
+function handleLoginResponse(data) {
+  if (data[0] === 'cardiologia') {
+    redirect_to_principal();
+  }
+}
+
+
+    function redirect_to_principal() {
+  document.location.href = 'principal.html';
+}
+
+function handleError(error) {
+  console.error('Error logging in:', error);
+  // Add error handling logic here
+}
+
+
+
+
+// Load data function
+function cargaDatos(id, nombre, apellido, fecha,nacimiento,direccion,direccion,telefono,clave) {
+  document.getElementById('id_pacienteus').value = id;
+  document.getElementById('nombreus').value = nombre;
+  document.getElementById('apellidous').value = apellido;
+  document.getElementById('fechaus').value = fecha;
+  document.getElementById('nacimientous').value = nacimiento;
+  document.getElementById('direccious').value = direccion;
+  document.getElementById('telefonous').value = telefono;
+  document.getElementById('claveus').value = clave;
+
+
+
+
+}
+
+
+
+
+function extraer(){
+fetch("http://localhost:3333/paciente")
+.then(response=>response.json())
+.then(datos=>{
+let medida=datos.length;
+document.getElementById('datosus').innerHTML='';
+for(x=0;x<=medida-1;x++){
+document.getElementById('datosus').innerHTML +=`<tr onclick="cargarDatos('${datos[x].id}','${datos[x].nombre}','${datos[x].apellido}','${datos[x].fecha}','${datos[x].nacimiento}','${datos[x].direccion}','${datos[x].telefono}','${datos[x].clave}')">
+                    <th scope="col">${datos[x].id}</th>
+                    <th scope="col">${datos[x].nombre}</th>
+                    <th scope="col">${datos[x].apellido}</th>
+                    <th scope="col">${datos[x].fecha}</th>
+                    <th scope="col">${datos[x].nacimiento}</th>
+                    <th scope="col">${datos[x].direccion}</th>
+                    <th scope="col">${datos[x].telefono}</th>
+                    <th scope="col">${datos[x].clave}</th>
+
+
+
+
+                  </tr>`;
+}
+})
+
+
+}
+
+
+
+document.getElementById('gdatos').addEventListener("click",()=>{
+    let  id_pacienteu=document.getElementById('id_pacienteus').value;
+    let nombreu=document.getElementById('nombreus').value;
+    let apellidou=document.getElementById('apellidous').value;
+    let fechau=document.getElementById('fechaus').value;
+    let nacimientou=document.getElementById('nacimientous').value;
+    let direcciou=document.getElementById('direccious').value;
+    let telefonou=document.getElementById('telefonous').value;
+    let claveus=document.getElementById('claveus').value;
+
+
+    let usuario={
+        id:id_pacienteu,
+        nombre:nombreu,
+        apellido:apellidou,
+        fecha:fechau,
+        nacimiento:nacimientou,
+        direccion:direcciou,
+        telefono:telefonou,
+        clave:claveus
+    }
+
+    let response=fetch("http://localhost:3333/usuarios",{
+      method:'POST',
+      headers: {'Content-Type':'application/json;charset=utf-8'},
+      body:JSON.stringify(paciente)
+    })
+    .then(response=>extraer())
+
+});
+
+function buscar() {
+  const datosElement = document.getElementById('datos');
+  datosElement.addEventListener("click", async () => {
+    try {
+      let  id_pacienteu=document.getElementById('id_pacienteus').value;
+    let nombreu=document.getElementById('nombreus').value;
+    let apellidou=document.getElementById('apellidous').value;
+    let fechau=document.getElementById('fechaus').value;
+    let nacimientou=document.getElementById('nacimientous').value;
+    let direcciou=document.getElementById('direccious').value;
+    let telefonou=document.getElementById('telefonous').value;
+    let claveus=document.getElementById('claveus').value;
+
+
+    let usuario={
+        id:id_pacienteu,
+        nombre:nombreu,
+        apellido:apellidou,
+        fecha:fechau,
+        nacimiento:nacimientou,
+        direccion:direcciou,
+        telefono:telefonou,
+        clave:claveus
+    }
+
+      const response = await fetch(`http://localhost:3333/paciente`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        body: JSON.stringify(paciente)
+      });
+
+      const responseBody = await response.json();
+      console.log(responseBody);
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  });
+}
+
+
+
+
+</script>
+</html>
